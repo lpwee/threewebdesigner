@@ -16,10 +16,10 @@ const WORKER_URL = process.env.NEXT_PUBLIC_WORKER_URL || 'http://localhost:8787'
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Response> {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     if (!id) {
       return errorResponse(new Error('Model ID is required'), 400);

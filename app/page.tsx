@@ -19,6 +19,7 @@ import {
   ErrorState,
   ModelControls,
 } from '@/app/components';
+import type { GenerationOptions } from '@/types';
 
 type PageState = 'empty' | 'loading' | 'success' | 'error';
 
@@ -28,18 +29,21 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generationProgress, setGenerationProgress] = useState(0);
-  const [generationStage, setGenerationStage] = useState<string | undefined>();
+  const [generationStage, setGenerationStage] = useState<'Generating' | 'Converting' | 'Optimizing' | undefined>();
 
   // Simulate model generation
-  const handleGenerate = useCallback(async (userPrompt: string, options: any) => {
+  const handleGenerate = useCallback(async (userPrompt: string, options: GenerationOptions) => {
     setLoading(true);
     setPageState('loading');
     setError(null);
     setGenerationProgress(0);
 
     try {
+      // Log the generation parameters (using them to avoid unused warnings)
+      console.log('Generating model with prompt:', userPrompt, 'options:', options);
+      
       // Simulate API call with progress
-      const stages = ['Generating', 'Converting', 'Optimizing'];
+      const stages: Array<'Generating' | 'Converting' | 'Optimizing'> = ['Generating', 'Converting', 'Optimizing'];
       for (let i = 0; i < stages.length; i++) {
         setGenerationStage(stages[i]);
         for (let progress = 0; progress <= 33; progress += 5) {
@@ -85,36 +89,36 @@ export default function Home() {
       <Hero />
 
       {/* Main Content */}
-      <main className="min-h-screen pt-20 pb-10">
-        <div className="container max-w-6xl">
+      <main className="min-h-screen pt-24 pb-16">
+        <div className="container max-w-7xl">
           {pageState === 'empty' && (
             <>
               {/* Quick Prompts */}
-              <section className="mb-12">
-                <h2 className="text-2xl font-semibold mb-6">Try these examples</h2>
+              <section className="mb-16">
+                <h2 className="text-3xl font-bold mb-8 text-white">Try these examples</h2>
                 <QuickPrompts onSelectPrompt={handleSelectQuickPrompt} />
               </section>
 
               {/* Main Editor Area */}
-              <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left: Input */}
                 <div className="flex flex-col gap-6">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Create Your Model</h3>
+                  <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 shadow-xl">
+                    <h3 className="text-2xl font-bold mb-6 text-white">Create Your Model</h3>
                     <PromptInput
                       value={prompt}
                       onChange={setPrompt}
                       onGenerate={handleGenerate}
                       isLoading={loading}
-                      error={error}
+                      error={error || undefined}
                     />
                   </div>
                 </div>
 
                 {/* Right: Preview */}
                 <div className="flex flex-col gap-6">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Preview</h3>
+                  <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 shadow-xl">
+                    <h3 className="text-2xl font-bold mb-6 text-white">Preview</h3>
                     <ThreeJsCanvas
                       isLoading={loading}
                       error={error || undefined}
@@ -138,14 +142,16 @@ export default function Home() {
           {pageState === 'success' && (
             <>
               {/* Success Content */}
-              <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
                 {/* Left: Model Viewer */}
                 <div className="flex flex-col gap-6">
-                  <h3 className="text-xl font-semibold">Your Model</h3>
-                  <ThreeJsCanvas
-                    isLoading={false}
-                    autoRotate={true}
-                  />
+                  <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 shadow-xl">
+                    <h3 className="text-2xl font-bold mb-6 text-white">Your Model</h3>
+                    <ThreeJsCanvas
+                      isLoading={false}
+                      autoRotate={true}
+                    />
+                  </div>
                   <ModelControls
                     onReset={handleReset}
                     onRotateX={() => {}}
@@ -161,34 +167,34 @@ export default function Home() {
 
                 {/* Right: Model Info & Actions */}
                 <div className="flex flex-col gap-6">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Model Information</h3>
-                    <div className="space-y-3 p-4 bg-slate-900/50 rounded-lg border border-slate-800">
-                      <div>
-                        <p className="text-xs text-slate-500">Polygon Count</p>
-                        <p className="text-lg font-mono text-cyan-400">5,000</p>
+                  <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 shadow-xl">
+                    <h3 className="text-2xl font-bold mb-6 text-white">Model Information</h3>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+                        <p className="text-sm text-slate-400 font-medium">Polygon Count</p>
+                        <p className="text-xl font-mono text-cyan-400 font-bold">5,000</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Texture Maps</p>
-                        <p className="text-lg font-mono text-cyan-400">2</p>
+                      <div className="flex justify-between items-center py-3 border-b border-slate-700/50">
+                        <p className="text-sm text-slate-400 font-medium">Texture Maps</p>
+                        <p className="text-xl font-mono text-cyan-400 font-bold">2</p>
                       </div>
-                      <div>
-                        <p className="text-xs text-slate-500">File Size</p>
-                        <p className="text-lg font-mono text-cyan-400">2.5 MB</p>
+                      <div className="flex justify-between items-center py-3">
+                        <p className="text-sm text-slate-400 font-medium">File Size</p>
+                        <p className="text-xl font-mono text-cyan-400 font-bold">2.5 MB</p>
                       </div>
                     </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-semibold mb-4">Your Prompt</h3>
-                    <p className="p-4 bg-slate-900/50 rounded-lg border border-slate-800 text-slate-300">
+                  <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 shadow-xl">
+                    <h3 className="text-2xl font-bold mb-4 text-white">Your Prompt</h3>
+                    <p className="text-slate-300 leading-relaxed">
                       {prompt}
                     </p>
                   </div>
 
                   <button
                     onClick={handleReset}
-                    className="btn btn-primary w-full"
+                    className="btn btn-primary w-full text-lg py-4"
                   >
                     Create Another Model
                   </button>
@@ -196,10 +202,12 @@ export default function Home() {
               </section>
 
               {/* Scroll Animation Preview */}
-              <section className="py-12 border-t border-slate-800">
-                <h3 className="text-2xl font-semibold mb-6">Scroll Animation Preview</h3>
-                <div className="p-8 bg-slate-900/50 rounded-lg border border-slate-800 text-center text-slate-500">
-                  Scroll animation component will be rendered here
+              <section className="py-16">
+                <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-12 shadow-xl">
+                  <h3 className="text-3xl font-bold mb-8 text-white text-center">Scroll Animation Preview</h3>
+                  <div className="text-center text-slate-500 text-lg">
+                    Scroll animation component will be rendered here
+                  </div>
                 </div>
               </section>
             </>
@@ -225,29 +233,56 @@ export default function Home() {
       </main>
 
       {/* Features Section */}
-      <section className="py-12 border-t border-slate-800">
-        <div className="container max-w-6xl">
-          <h2 className="text-3xl font-bold mb-8 text-center">Features</h2>
+      <section className="py-24 border-t border-slate-800/50">
+        <div className="container max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">Powerful Features</h2>
+            <p className="text-xl text-slate-400">Everything you need to create stunning 3D models</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-6 rounded-lg bg-slate-900/50 border border-slate-800">
-              <h3 className="text-lg font-semibold mb-2">🚀 AI-Powered</h3>
-              <p className="text-slate-400">Advanced AI generates 3D models from your text descriptions instantly.</p>
+            <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 hover:border-cyan-500/30 transition-all shadow-xl">
+              <div className="w-12 h-12 bg-cyan-500/10 border border-cyan-500/20 rounded-xl flex items-center justify-center mb-6">
+                <span className="text-2xl">🚀</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">AI-Powered</h3>
+              <p className="text-slate-400 leading-relaxed">Advanced AI generates 3D models from your text descriptions instantly.</p>
             </div>
-            <div className="p-6 rounded-lg bg-slate-900/50 border border-slate-800">
-              <h3 className="text-lg font-semibold mb-2">⚡ Fast & Responsive</h3>
-              <p className="text-slate-400">Cloud-based generation with real-time progress updates.</p>
+            <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 hover:border-cyan-500/30 transition-all shadow-xl">
+              <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center mb-6">
+                <span className="text-2xl">⚡</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">Fast & Responsive</h3>
+              <p className="text-slate-400 leading-relaxed">Cloud-based generation with real-time progress updates.</p>
             </div>
-            <div className="p-6 rounded-lg bg-slate-900/50 border border-slate-800">
-              <h3 className="text-lg font-semibold mb-2">🎨 Interactive</h3>
-              <p className="text-slate-400">Explore your models with intuitive 3D controls and animations.</p>
+            <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 rounded-2xl p-8 hover:border-cyan-500/30 transition-all shadow-xl">
+              <div className="w-12 h-12 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center mb-6">
+                <span className="text-2xl">🎨</span>
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-white">Interactive</h3>
+              <p className="text-slate-400 leading-relaxed">Explore your models with intuitive 3D controls and animations.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 py-8 text-center text-slate-500 text-sm">
-        <p>&copy; 2025 ThreeWebDesigner. All rights reserved.</p>
+      <footer className="border-t border-slate-800/50 py-12">
+        <div className="container max-w-7xl">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-cyan-400 rounded-lg flex items-center justify-center">
+                <span className="text-slate-900 font-bold text-lg">3D</span>
+              </div>
+              <span className="font-bold text-lg text-white">ThreeWebDesigner</span>
+            </div>
+            <p className="text-slate-500 text-sm">&copy; 2025 ThreeWebDesigner. All rights reserved.</p>
+            <div className="flex gap-6">
+              <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors text-sm">Privacy</a>
+              <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors text-sm">Terms</a>
+              <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors text-sm">Contact</a>
+            </div>
+          </div>
+        </div>
       </footer>
     </>
   );

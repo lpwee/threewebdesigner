@@ -162,7 +162,7 @@ export function validateGenerateModelRequest(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const details = error.errors.reduce(
+      const details = error.issues.reduce(
         (acc, err) => {
           acc[err.path.join('.')] = err.message;
           return acc;
@@ -190,7 +190,7 @@ export function validateAnimationConfigRequest(
     return { success: true, data: validated };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const details = error.errors.reduce(
+      const details = error.issues.reduce(
         (acc, err) => {
           acc[err.path.join('.')] = err.message;
           return acc;

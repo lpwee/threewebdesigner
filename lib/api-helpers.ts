@@ -9,7 +9,7 @@
  * - Success responses with proper structure
  */
 
-import type { GenerateModelResponse, ErrorResponse } from '@/types';
+import type { GenerateModelResponse, ErrorResponse, ModelMetadata, ScrollAnimation } from '@/types';
 
 /**
  * ============================================================================
@@ -299,14 +299,14 @@ export function handleCORSPreflight(request: Request): Response {
 export function buildGenerateModelResponse(
   modelId: string,
   modelData: { format: 'glb' | 'gltf'; data: string },
-  metadata: any,
-  animations: any
+  metadata: ModelMetadata,
+  animations: ScrollAnimation[]
 ): Response {
   const response: GenerateModelResponse = {
     modelId,
     modelData,
     metadata,
-    animations,
+    animations: { suggestions: animations },
   };
 
   return jsonResponse(response, 200);

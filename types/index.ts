@@ -106,6 +106,9 @@ export interface CachedModel {
     data: string; // Base64
   };
   metadata: ModelMetadata;
+  animations?: {
+    suggestions: AnimationSuggestion[];
+  };
   createdAt: string;
   expiresAt: string;
 }

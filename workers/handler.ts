@@ -7,7 +7,7 @@
  * Routes requests to appropriate handlers and manages CORS
  */
 
-import type { WorkerRequest, WorkerEnv } from '@/types';
+import type { WorkerRequest, WorkerEnv, CachedModel } from '@/types';
 import { generateModelAgent } from './agents/modelGeneration';
 import { getCORSHeaders, handleCORSPreflight } from '@/lib/api-helpers';
 import { validateGenerateModelRequest } from '@/lib/validation';
@@ -84,7 +84,7 @@ async function handleGenerateModel(
 
     // Validate request
     const validation = validateGenerateModelRequest(body);
-    if (!validation.success) {
+    if (!validation.success || !validation.data) {
       return errorResponse(
         new Error(`Validation failed: ${JSON.stringify(validation.details)}`),
         400
@@ -184,15 +184,15 @@ async function handleAnimationConfig(
   env: WorkerEnv
 ): Promise<Response> {
   try {
-    const body = await request.json();
-    const { modelId, scrollBehavior } = body;
+    const body = await request.json() as unknown;
+    const { modelId, scrollBehavior } = body as { modelId?: string; scrollBehavior?: unknown };
 
     if (!modelId) {
       return errorResponse(new Error('modelId is required'), 400);
     }
 
     // Get model from cache
-    const model = await env.MODELS_CACHE.get(`model:${modelId}`, 'json');
+    const model = await env.MODELS_CACHE.get(`model:${modelId}`, 'json') as CachedModel | null;
 
     if (!model) {
       return errorResponse(Errors.modelNotFound(modelId), 404);

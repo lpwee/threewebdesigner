@@ -9,7 +9,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import type { PromptInputProps, GenerationOptions } from '@/types';
+import type { PromptInputProps } from '@/types';
 import { validatePrompt } from '@/lib/validation';
 
 const PLACEHOLDER_PROMPTS = [
