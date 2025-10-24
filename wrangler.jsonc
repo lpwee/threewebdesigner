@@ -1,51 +1,93 @@
 /**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
+ * @context7-library /threewebdesigner/wrangler
+ * @description Cloudflare Worker configuration
+ * @version 1.0.0
+ * 
+ * From PRD 05, Section 6: Worker Configuration
  */
+
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "threewebdesigner",
-	"main": ".open-next/worker.js",
-	"compatibility_date": "2025-03-01",
-	"compatibility_flags": [
-		"nodejs_compat",
-		"global_fetch_strictly_public"
-	],
-	"assets": {
-		"binding": "ASSETS",
-		"directory": ".open-next/assets"
-	},
-	"observability": {
-		"enabled": true
-	}
-	/**
-	 * Smart Placement
-	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-	 */
-	// "placement": { "mode": "smart" }
-	/**
-	 * Bindings
-	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-	 * databases, object storage, AI inference, real-time communication and more.
-	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-	 */
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 */
-	// "vars": { "MY_VARIABLE": "production_value" }
-	/**
-	 * Note: Use secrets to store sensitive data.
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 */
-	/**
-	 * Static Assets
-	 * https://developers.cloudflare.com/workers/static-assets/binding/
-	 */
-	// "assets": { "directory": "./public/", "binding": "ASSETS" }
-	/**
-	 * Service Bindings (communicate between multiple Workers)
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-	 */
-	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
+  "name": "threewebdesigner-worker",
+  "main": "./workers/handler.ts",
+  "compatibility_date": "2024-01-15",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "streams_enable_constructors"
+  ],
+
+  /**
+   * Cloudflare KV namespace binding for model caching
+   * From PRD 03, Section 3: Tool 4 - cache_model_data
+   */
+  "kv_namespaces": [
+    {
+      "binding": "MODELS_CACHE",
+      "id": "YOUR_KV_NAMESPACE_ID",
+      "preview_id": "YOUR_KV_PREVIEW_NAMESPACE_ID"
+    }
+  ],
+
+  /**
+   * Environment variables
+   * From PRD 05, Section 2: Environment Variables
+   */
+  "env": {
+    "production": {
+      "vars": {
+        "BLENDER_MCP_URL": "https://your-blender-mcp-server.com",
+        "MODEL_CACHE_TTL": "86400",
+        "ENABLE_DETAILED_LOGGING": "false",
+        "AI_API_KEY": "your-api-key"
+      },
+      "kv_namespaces": [
+        {
+          "binding": "MODELS_CACHE",
+          "id": "YOUR_KV_NAMESPACE_ID"
+        }
+      ]
+    },
+    "development": {
+      "vars": {
+        "BLENDER_MCP_URL": "http://localhost:5000",
+        "MODEL_CACHE_TTL": "3600",
+        "ENABLE_DETAILED_LOGGING": "true",
+        "AI_API_KEY": "dev-key"
+      },
+      "kv_namespaces": [
+        {
+          "binding": "MODELS_CACHE",
+          "id": "YOUR_KV_PREVIEW_NAMESPACE_ID",
+          "preview_id": "YOUR_KV_PREVIEW_NAMESPACE_ID"
+        }
+      ]
+    }
+  },
+
+  /**
+   * Routes configuration
+   * From PRD 02, Section 2.1 & PRD 05, Section 3: API Endpoints
+   */
+  "routes": [
+    {
+      "pattern": "threewebdesigner.workers.dev/api/*",
+      "zone_name": "threewebdesigner.com"
+    }
+  ],
+
+  /**
+   * Build configuration
+   */
+  "build": {
+    "command": "npm run build",
+    "cwd": "./"
+  },
+
+  /**
+   * Triggers for scheduled tasks
+   */
+  "triggers": {
+    "crons": [
+      "0 2 * * *"
+    ]
+  }
 }

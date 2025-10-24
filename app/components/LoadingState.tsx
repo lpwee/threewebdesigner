@@ -71,7 +71,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         />
 
         {/* Inner dot */}
-        <div className="absolute inset-4 rounded-full bg-gradient-to-br from-cyan-400 to-amber-500 opacity-30 blur" />
+        <div className="absolute inset-4 rounded-full bg-linear-to-br from-cyan-400 to-amber-500 opacity-30 blur" />
       </div>
 
       {/* Stage indicator */}
@@ -88,7 +88,7 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
         </div>
         <div className="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
           <div
-            className="h-full bg-gradient-to-r from-cyan-400 to-cyan-600 transition-all duration-500"
+            className="h-full bg-linear-to-r from-cyan-400 to-cyan-600 transition-all duration-500"
             style={{ width: `${Math.min(displayedProgress, 100)}%` }}
             role="progressbar"
             aria-valuenow={Math.round(displayedProgress)}

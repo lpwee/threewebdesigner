@@ -10,10 +10,10 @@ export const Hero: React.FC = () => {
   return (
     <section className="relative min-h-[400px] md:min-h-[500px] overflow-hidden">
       {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-slate-900/50 to-transparent pointer-events-none" />
       
       <div className="container relative z-10 flex flex-col items-center justify-center min-h-[400px] md:min-h-[500px] text-center gap-6">
-        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-amber-500 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-bold bg-linear-to-r from-cyan-400 to-amber-500 bg-clip-text text-transparent">
           Create 3D Models with AI
         </h1>
         <p className="text-lg text-slate-300 max-w-2xl">

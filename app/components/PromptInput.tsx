@@ -200,7 +200,7 @@ export const PromptInput: React.FC<PromptInputProps> = ({
         disabled={isLoading || !validation.valid || characterCount === 0}
         className={`
           w-full py-3 px-4 rounded-lg font-semibold
-          bg-gradient-to-r from-cyan-400 to-cyan-600
+          bg-linear-to-r from-cyan-400 to-cyan-600
           text-slate-900
           transition-all duration-200
           hover:shadow-lg hover:shadow-cyan-500/30 hover:scale-105
